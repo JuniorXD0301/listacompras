@@ -6,7 +6,7 @@ import { Card, CardContent, Typography, Button, Grid } from "@material-ui/core";
 import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
-  const { setCart } = useContext(AppContext);
+  const { cart, setCart } = useContext(AppContext);
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
@@ -33,9 +33,18 @@ const ProductList = () => {
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   const handleAddToCart = (post) => {
-    // Lógica para agregar al carrito
-    setCart((prevCart) => [...prevCart, post]);
-    // Navegar a la página del carrito
+    let newCart = [...cart];
+    let itemInCart = newCart.find((item) => item.id === post.id);
+    if (itemInCart) {
+      itemInCart.quantity++;
+    } else {
+      itemInCart = {
+        ...post,
+        quantity: 1,
+      };
+      newCart.push(itemInCart);
+    }
+    setCart(newCart);
     navigate('/cart');
   };
 
