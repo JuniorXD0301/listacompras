@@ -1,9 +1,16 @@
-// src/components/ProductList.js
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../Appcontext.js";
 import axios from "axios";
-import { Card, CardContent, Typography, Button, Grid } from "@material-ui/core";
-import { useNavigate } from 'react-router-dom';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Grid,
+  IconButton,
+} from "@material-ui/core";
+import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import { useNavigate } from "react-router-dom";
 
 const ProductList = () => {
   const { cart, setCart } = useContext(AppContext);
@@ -27,7 +34,7 @@ const ProductList = () => {
   }, []);
 
   /*paginador*/
-  const postsPerPage = 10;
+  const postsPerPage = 12;
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
@@ -45,31 +52,36 @@ const ProductList = () => {
       newCart.push(itemInCart);
     }
     setCart(newCart);
-    navigate('/cart');
+    navigate("/cart");
   };
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div>
+    <div style={{ backgroundColor: "#DCF2F1", minHeight: "100vh" }}>
       <Typography variant="h4" style={{ margin: "20px 20px" }}>
         List of Posts
       </Typography>
 
-      <Grid container spacing={3} style={{margin: "0 1px"}}>
+      <Grid container spacing={3} style={{ margin: "0 1px" }}>
         {currentPosts.map((post) => (
           <Grid key={post.id} item xs={12} sm={6} md={4} lg={3}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
+                  <b>Titulo: </b>
                   {post.title}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
+                  <b>Contenido: </b>
                   {post.body}
                 </Typography>
-                <Button color="primary" onClick={() => handleAddToCart(post)}>
-                  Add to Cart
-                </Button>
+                <IconButton
+                  color="primary"
+                  onClick={() => handleAddToCart(post)}
+                >
+                  <ShoppingCartIcon />
+                </IconButton>
               </CardContent>
             </Card>
           </Grid>
@@ -79,17 +91,24 @@ const ProductList = () => {
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <Button
           variant="contained"
-          color="primary"
+          style={{
+            backgroundColor: currentPage === 1 ? "#7FC7D9" : "#0F1035",
+            color: "white",
+            marginRight: "10px",
+          }}
           disabled={currentPage === 1}
           onClick={() => paginate(currentPage - 1)}
-          style={{ marginRight: "10px" }}
         >
           Previous Page
         </Button>
         <span style={{ margin: "0 10px" }}>Page {currentPage}</span>
         <Button
           variant="contained"
-          color="primary"
+          style={{
+            backgroundColor:
+              currentPosts.length < postsPerPage ? "#7FC7D9" : "#0F1035",
+            color: "white",
+          }}
           disabled={currentPosts.length < postsPerPage}
           onClick={() => paginate(currentPage + 1)}
         >

@@ -12,10 +12,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import CheckIcon from "@material-ui/icons/Check";
+import AddIcon from "@material-ui/icons/Add";
+import RemoveIcon from "@material-ui/icons/Remove";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -23,6 +25,8 @@ const Cart = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [deleteAll, setDeleteAll] = useState(false);
+  const [purchase, setPurchase] = useState(false);
+  const [modalText, setModalText] = useState("");
 
   const handleDelete = (id) => {
     let newCart = [...cart];
@@ -59,9 +63,25 @@ const Cart = () => {
     setCart(newCart);
   };
 
+  const handlePurchase = () => {
+    setOpen(true);
+    setModalText("¿Desea comprar estos productos?");
+  };
+
+  const handleConfirmPurchase = () => {
+    setCart([]);
+    setOpen(false);
+    setPurchase(false);
+    alert("Compra exitosa ✔️");
+  };
+
   return (
-    <div>
-      <IconButton aria-label="back" onClick={handleBack}>
+    <div style={{ backgroundColor: "#DCF2F1", minHeight: "100vh" }}>
+      <IconButton
+        aria-label="back"
+        onClick={handleBack}
+        style={{ color: "#365486" }}
+      >
         <ArrowBackIcon />
       </IconButton>
       <Typography variant="h4" gutterBottom align="center">
@@ -78,33 +98,68 @@ const Cart = () => {
                 <Typography variant="body1" gutterBottom>
                   Cantidad: {post.quantity}
                 </Typography>
-                <Button onClick={() => handleAddToCart(post)}>Agregar al carrito</Button>
-                <Button onClick={() => handleDelete(post.id)}>Eliminar del carrito</Button>
+                <IconButton
+                  color="primary"
+                  onClick={() => handleAddToCart(post)}
+                  style={{ color: "#365486" }}
+                >
+                  <AddIcon />
+                </IconButton>
+                <IconButton
+                  color="primary"
+                  onClick={() => handleDelete(post.id)}
+                  style={{ color: "#365486" }}
+                >
+                  <RemoveIcon />
+                </IconButton>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
-      <IconButton aria-label="delete" onClick={() => {setOpen(true); setDeleteAll(true);}}>
-        <DeleteIcon />
-      </IconButton>
+      <div style={{ textAlign: "center" }}>
+        <IconButton
+          aria-label="delete"
+          onClick={() => {
+            setModalText("¿Desea eliminar estos productos?");
+            setOpen(true);
+            setDeleteAll(true);
+          }}
+          title="Eliminar todos los productos"
+          style={{ color: "red" }}
+        >
+          <DeleteIcon />
+        </IconButton>
+        <IconButton
+          aria-label="purchase"
+          onClick={handlePurchase}
+          title="Confirmar compra"
+          style={{ color: "#365486" }}
+        >
+          <CheckIcon />
+        </IconButton>
+      </div>
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Eliminar productos"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Confirmación"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {deleteAll ? "¿Desea eliminar todos los productos del carrito?" : "¿Desea eliminar este producto del carrito?"}
+            {modalText}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="primary">
             No
           </Button>
-          <Button onClick={deleteAll ? handleConfirmDeleteAll : handleDelete} color="primary" autoFocus>
+          <Button
+            onClick={deleteAll ? handleConfirmDeleteAll : handleConfirmPurchase}
+            color="primary"
+            autoFocus
+          >
             Sí
           </Button>
         </DialogActions>
